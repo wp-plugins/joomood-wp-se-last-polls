@@ -1,27 +1,5 @@
 <?php
 
-//  Description: JooMood WP Plugins - Retrieve Last X SE Polls
-//	Author: JooMood
-//	Version: 1.0
-//	Author URI: http://2cq.it/
-
-//	Copyright 2009, JooMOod
-//	-----------------------
-
-//	This program is free software: you can redistribute it and/or modify
-//	it under the terms of the GNU General Public License as published by
-//	the Free Software Foundation, either version 3 of the License, or
-//	(at your option) any later version.
-
-//	This program is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//	GNU General Public License for more details.
-
-//	You should have received a copy of the GNU General Public License
-//	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------
 //					JOOMOOD START PLAYING
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -262,15 +240,39 @@ $shortdesc = substr($mydesc,0,$cut_off)."...";
 
 
 $mydir=$wpdir."/wp-content/plugins/wp-se_polls";
+$subdir = $row['user_id']+999-(($row['user_id']-1)%1000);
+
+
+if($use_resize !=="no") { // RESIZING SCRIPT
 
 if ($row['user_photo']!='') {
-
 // Creates a thumbnail based on your personal dims (width/height), without stretching the original pic
-
-$mypic="<img src=\"{$mydir}/image.php/{$row['user_photo']}?width={$mywidth}&amp;height={$myheight}&amp;cropratio=1:1&amp;quality=100&amp;image={$socialdir}/uploads_user/1000/{$row['user_id']}/{$row['user_photo']}\" style=\"border:".$image_border."px solid ".$image_bordercolor."\" alt=\"".$mynome."\" />";
+$mypic="<img src=\"{$mydir}/image.php/{$row['user_photo']}?width={$mywidth}&amp;height={$myheight}&amp;cropratio=1:1&amp;quality=100&amp;image={$socialdir}/uploads_user/{$subdir}/{$row['user_id']}/{$row['user_photo']}\" style=\"border:".$image_border."px solid ".$image_bordercolor."\" alt=\"".$myn."\" />";
 } else {
-$mypic="<img src=\"{$mydir}/image.php/nophoto.gif?width={$mywidth}&amp;height={$myheight}&amp;cropratio=1:1&amp;quality=100&amp;image={$socialdir}/{$empty_image_url}\" style=\"border:".$image_border."px ".$image_bordercolor." solid\" alt=\"".$mynome."\" />";
+$mypic="<img src=\"{$mydir}/image.php/nophoto.gif?width={$mywidth}&amp;height={$myheight}&amp;cropratio=1:1&amp;quality=100&amp;image={$socialdir}/{$empty_image_url}\" style=\"border:".$image_border."px ".$image_bordercolor." solid\" alt=\"".$myn."\" />";
 }
+
+} else { // NO RESIZING SCRIPT
+
+if ($row['user_photo']!='') {
+// Creates a thumbnail based on your personal dims (width/height)
+$myp=str_replace(".", "_thumb.", $row['user_photo']);
+$mypfile=$socialdir."/uploads_user/{$subdir}/{$row['user_id']}/{$myp}";
+
+if (@fopen($mypfile, "r")) {
+$myps=str_replace(".", "_thumb.", $row['user_photo']);
+$mypfile=$socialdir."/uploads_user/{$subdir}/{$row['user_id']}/{$myps}";
+} else {
+$mypfile=$socialdir."/uploads_user/{$subdir}/{$row['user_id']}/{$row['user_photo']}";
+}
+
+$mypic="<img src=\"{$mypfile}\" width=\"{$mywidth}\" height=\"{$myheight}\" style=\"border:".$image_border."px solid ".$image_bordercolor."\" alt=\"".$myn."\" />";
+} else {
+$mypic="<img src=\"{$socialdir}/{$empty_image_url}\" width=\"{$mywidth}\" height=\"{$myheight}\" style=\"border:".$image_border."px ".$image_bordercolor." solid\" alt=\"".$myn."\" />";
+}
+
+}
+
 
 
 // Create a link to the poll
